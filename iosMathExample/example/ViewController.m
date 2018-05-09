@@ -87,7 +87,7 @@
 
     // Demo formulae
     // Quadratic formula
-    self.demoLabels[0] = [self createMathLabel:@"x = \\text{台灣No.1} \\overleftrightarrow{AB} \\overrightarrow{AB} overleftarrow{AB} \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}" withHeight:60];
+    self.demoLabels[0] = [self createMathLabel:@"x = \\text{_____} \\text{台灣No.1} \\overleftrightarrow{AB} \\overrightarrow{AB} overleftarrow{AB} \\frac{-b \\pm \\sqrt{b^2-4ac}}{2a}" withHeight:60];
     [self addLabelAsSubview:self.demoLabels[0] to:contentView];
     self.demoLabels[0].fontSize = 15;
     // This is first label so set the height from the top
@@ -178,7 +178,7 @@
     
     self.demoLabels[21] = [self createMathLabel:@"\\color{#ff3333}{c}\\color{#9933ff}{o}\\color{#ff0080}{l}+\\color{#99ff33}{\\frac{\\color{#ff99ff}{o}}{\\color{#990099}{r}}}-\\color{#33ffff}{\\sqrt[\\color{#3399ff}{e}]{\\color{#3333ff}{d}}}" withHeight:60];
 
-
+    
     for (NSUInteger i = 1; i < self.demoLabels.count; i++) {
         self.demoLabels[i].fontSize = 15;
         [self addLabelWithIndex:i inArray:self.demoLabels toView:contentView];

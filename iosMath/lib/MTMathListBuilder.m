@@ -45,6 +45,7 @@ NSString *const MTParseError = @"ParseError";
     MTEnvProperties* _currentEnv;
     MTFontStyle _currentFontStyle;
     BOOL _spacesAllowed;
+    BOOL _underLineAllowed;
 }
 
 - (instancetype)initWithString:(NSString *)str
@@ -141,7 +142,7 @@ NSString *const MTParseError = @"ParseError";
             // note: if the next char is the stopChar it will be consumed by the ^ and so it doesn't count as stop
             prevAtom.superScript = [self buildInternal:true];
             continue;
-        } else if (ch == '_') {
+        } else if (ch == '_' && !_underLineAllowed) {
             NSAssert(!oneCharOnly, @"This should have been handled before");
             
             if (!prevAtom || prevAtom.subScript || !prevAtom.scriptsAllowed) {
@@ -186,14 +187,17 @@ NSString *const MTParseError = @"ParseError";
             MTFontStyle fontStyle = [MTMathAtomFactory fontStyleWithName:command];
             if (fontStyle != NSNotFound) {
                 BOOL oldSpacesAllowed = _spacesAllowed;
+                BOOL oldUnderLineAllowed = _underLineAllowed;
                 // Text has special consideration where it allows spaces without escaping.
                 _spacesAllowed = [command isEqualToString:@"text"];
+                _underLineAllowed = [command isEqualToString:@"text"];
                 MTFontStyle oldFontStyle = _currentFontStyle;
                 _currentFontStyle = fontStyle;
                 MTMathList* sublist = [self buildInternal:true];
                 // Restore the font style.
                 _currentFontStyle = oldFontStyle;
                 _spacesAllowed = oldSpacesAllowed;
+                _underLineAllowed = oldUnderLineAllowed;
 
                 prevAtom = [sublist.atoms lastObject];
                 [list append:sublist];
@@ -224,6 +228,8 @@ NSString *const MTParseError = @"ParseError";
         } else if (_spacesAllowed && ch == ' ') {
             // If spaces are allowed then spaces do not need escaping with a \ before being used.
             atom = [MTMathAtomFactory atomForLatexSymbolName:@" "];
+        } else if (_underLineAllowed && ch == '_') {
+            atom = [MTMathAtomFactory atomForLatexSymbolName:@"_"];
         } else {
             atom = [MTMathAtomFactory atomForCharacter:ch];
             if (!atom) {
