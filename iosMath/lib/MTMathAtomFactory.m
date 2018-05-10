@@ -85,6 +85,12 @@ NSString *const MTSymbolDegree = @"\u00B0"; // \circ
 + (MTMathAtom *)atomForCharacter:(unichar)ch
 {
     NSString *chStr = [NSString stringWithCharacters:&ch length:1];
+    
+    // == workground for special char (？、，。；：！)==
+    if (ch == 0xff1f || ch == 0x3001 || ch == 0xff0c || ch == 0x3002 || ch == 0xff01 || ch == 0xff1a || ch == 0xff1b) {
+        return [MTMathAtom atomWithType:kMTMathAtomOrdinary value:chStr];
+    }
+    // == workground for special char (？、，。；：！)==
     if ((ch >= 0x4E00) && (ch <= 0x9FFF)) {
         // CJK support. But xits-math-cn font only has Chinese characters support.
         return [MTMathAtom atomWithType:kMTMathAtomOrdinary value:chStr];
