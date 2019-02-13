@@ -94,6 +94,9 @@ NSString *const MTSymbolDegree = @"\u00B0"; // \circ
     if ((ch >= 0x4E00) && (ch <= 0x9FFF)) {
         // CJK support. But xits-math-cn font only has Chinese characters support.
         return [MTMathAtom atomWithType:kMTMathAtomOrdinary value:chStr];
+    } else if ((ch >= 0x0E00) && (ch <= 0x0E7F)) {
+        // Thai support
+        return [MTMathAtom atomWithType:kMTMathAtomOrdinary value:chStr];
     } else if (ch < 0x21 || ch > 0x7E) {
         // skip non ascii characters and spaces
         return nil;
