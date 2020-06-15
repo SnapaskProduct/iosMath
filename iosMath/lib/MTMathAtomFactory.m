@@ -4,7 +4,7 @@
 //
 //  Created by Kostub Deshmukh on 8/28/13.
 //  Copyright (C) 2013 MathChat
-//   
+//
 //  This software may be modified and distributed under the terms of the
 //  MIT license. See the LICENSE file for details.
 //
@@ -78,7 +78,6 @@ NSString *const MTSymbolDegree = @"\u00B0"; // \circ
 
 + (MTMathAtom *)atomForAnyCharacter:(unichar) ch{
     NSString *chStr = [NSString stringWithCharacters:&ch length:1];
-//    NSLog(@"%@",chStr);
     return [MTMathAtom atomWithType:kMTMathAtomOrdinary value:chStr];
 }
 
@@ -86,54 +85,65 @@ NSString *const MTSymbolDegree = @"\u00B0"; // \circ
 {
     NSString *chStr = [NSString stringWithCharacters:&ch length:1];
     
-    // == workground for special char (？、，。；：！)==
-    if (ch == 0xff1f || ch == 0x3001 || ch == 0xff0c || ch == 0x3002 || ch == 0xff01 || ch == 0xff1a || ch == 0xff1b) {
-        return [MTMathAtom atomWithType:kMTMathAtomOrdinary value:chStr];
-    }
-    // == workground for special char (？、，。；：！)==
-    if ((ch >= 0x4E00) && (ch <= 0x9FFF)) {
-        // CJK support. But xits-math-cn font only has Chinese characters support.
-        return [MTMathAtom atomWithType:kMTMathAtomOrdinary value:chStr];
-    } else if ((ch >= 0x0E00) && (ch <= 0x0E7F)) {
-        // Thai support
-        return [MTMathAtom atomWithType:kMTMathAtomOrdinary value:chStr];
-    } else if (ch < 0x21 || ch > 0x7E) {
-        // skip non ascii characters and spaces
-        return nil;
-    } else if (ch == '$' || ch == '%' || ch == '#' || ch == '&' || ch == '~' || ch == '\'') {
+    // Special Cases
+    
+    if (ch == '$' || ch == '%' || ch == '#' || ch == '&' || ch == '~' || ch == '\'') {
         // These are latex control characters that have special meanings. We don't support them.
         return nil;
-    } else if (ch == '^' || ch == '_' || ch == '{' || ch == '}' || ch == '\\') {
+    }
+    
+    if (ch == '^' || ch == '_' || ch == '{' || ch == '}' || ch == '\\') {
         // more special characters for Latex.
         return nil;
-    } else if (ch == '(' || ch == '[') {
+    }
+    
+    if (ch == '(' || ch == '[') {
         return [MTMathAtom atomWithType:kMTMathAtomOpen value:chStr];
-    } else if (ch == ')' || ch == ']' || ch == '!' || ch == '?') {
+    }
+    
+    if (ch == ')' || ch == ']' || ch == '!' || ch == '?') {
         return [MTMathAtom atomWithType:kMTMathAtomClose value:chStr];
-    } else if (ch == ',' || ch == ';') {
+    }
+    
+    if (ch == ',' || ch == ';') {
         return [MTMathAtom atomWithType:kMTMathAtomPunctuation value:chStr];
-    } else if (ch == '=' || ch == '>' || ch == '<') {
+    }
+    
+    if (ch == '=' || ch == '>' || ch == '<') {
         return [MTMathAtom atomWithType:kMTMathAtomRelation value:chStr];
-    } else if (ch == ':') {
+    }
+    
+    if (ch == ':') {
         // Math colon is ratio. Regular colon is \colon
         return [MTMathAtom atomWithType:kMTMathAtomRelation value:@"\u2236"];
-    } else if (ch == '-') {
+    }
+    
+    if (ch == '-') {
         // Use the math minus sign
         return [MTMathAtom atomWithType:kMTMathAtomBinaryOperator value:@"\u2212"];
-    } else if (ch == '+' || ch == '*') {
+    }
+    
+    if (ch == '+' || ch == '*') {
         return [MTMathAtom atomWithType:kMTMathAtomBinaryOperator value:chStr];
-    } else if (ch == '.' || (ch >= '0' && ch <= '9')) {
+    }
+    
+    if (ch == '.' || (ch >= '0' && ch <= '9')) {
         return [MTMathAtom atomWithType:kMTMathAtomNumber value:chStr];
-    } else if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
+    }
+    
+    if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z')) {
         return [MTMathAtom atomWithType:kMTMathAtomVariable value:chStr];
-    } else if (ch == '"' || ch == '/' || ch == '@' || ch == '`' || ch == '|') {
+    }
+    
+    if (ch == '"' || ch == '/' || ch == '@' || ch == '`' || ch == '|') {
         // just an ordinary character. The following are allowed ordinary chars
         // | / ` @ "
         return [MTMathAtom atomWithType:kMTMathAtomOrdinary value:chStr];
-    } else {
-        NSAssert(false, @"Unknown ascii character %@. Should have been accounted for.", @(ch));
-        return nil;
     }
+    
+    // Default return
+    
+    return [MTMathAtom atomWithType:kMTMathAtomOrdinary value:chStr];
 }
 
 + (MTMathList *)mathListForCharacters:(NSString *)chars
